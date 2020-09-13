@@ -1,0 +1,20 @@
+﻿@model Model.Teacher
+@Html.ValidationSummary()
+<form id="CreateForm" class="form-group" asp-action="CreateTeacher">
+    @Html.AntiForgeryToken()
+    <label>First Name</label>
+    <input required class="form-control" type="text" asp-for="FirstName" placeholder="Enter First Name" />
+    <label>Last Name</label>
+    <input required class="form-control" type="text" asp-for="LastName" placeholder="Enter Last Name" />
+    <label>What are you specialized in?</label>
+    <input required class="form-control" type="text" asp-for="Speciality" placeholder="Enter Speciality" />
+    <label>User name</label>
+    <input required class="form-control" type="text" asp-for="Username" placeholder="Enter User Name" />
+    <label>Password</label>
+    <input required class="form-control" type="password" asp-for="Password" placeholder="Enter Password" />
+
+    <button class="btn btn-primary" type="submit">Create</button>
+</form>
+
+
+

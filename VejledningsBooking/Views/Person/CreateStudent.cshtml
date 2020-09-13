@@ -1,0 +1,14 @@
+﻿@model Model.Student
+@Html.ValidationSummary()
+
+<form id="CreateForm" class="form-group" asp-action="CreateStudent">
+    @Html.AntiForgeryToken()
+    <input required class="form-control" type="text" asp-for="FirstName" placeholder="First Name" />
+    <input required class="form-control" type="text" asp-for="LastName" placeholder="Last Name" />
+    <input required class="form-control" type="text" asp-for="Username" placeholder="User Name" />
+    <input required class="form-control" type="password" asp-for="Password" placeholder="Password" />
+    <button class="btn btn-primary" type="submit">Create</button>
+</form>
+
+
+
