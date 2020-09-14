@@ -13,6 +13,7 @@ namespace VejledningsBooking.ViewModel
         public int SelectedHoldId { get; set; }
         public Calender SelectedCalender { get; set; }
         public List<DateTime> Dates { get; set; }
+        public List<DateTime> Hours { get; set; }
 
         public string GetDateFormatted(int index)
         {

@@ -15,7 +15,7 @@ namespace Infrastructure.Repository.Calender.Concretes
         }
         public async Task<Model.Calender> GetCalenderWithIncludes(Model.Hold hold)
         {
-            return await context.Calenders.Where(x => x.Hold.Contains(hold)).Include(x => x.Timeslots).ThenInclude(x => x.Booking).FirstOrDefaultAsync();
+            return await context.Calenders.Where(x => x.Hold.Contains(hold)).Include(x => x.Timeslots).ThenInclude(x => x.Booking).ThenInclude(x=>x.Student).Include(x=>x.Timeslots).ThenInclude(x=>x.Teacher).FirstOrDefaultAsync();
         }
     }
 }

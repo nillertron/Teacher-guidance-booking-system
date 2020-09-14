@@ -35,6 +35,7 @@ namespace VejledningsBooking.Controllers
             var hold = await holdCRUD.GetHoldFromId(model.SelectedHoldId);
             model.SelectedCalender = await calenderCRUD.Get(hold);
             model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
+            model.Hours = await calenderDateManager.GetDailyHourTimes();
             return View(model);
         }
         public async Task<IActionResult> Create()

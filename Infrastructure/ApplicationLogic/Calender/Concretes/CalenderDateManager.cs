@@ -40,5 +40,18 @@ namespace Infrastructure.ApplicationLogic.Calender.Concretes
             }
             return list;
         }
+
+        public async Task<List<DateTime>> GetDailyHourTimes()
+        {
+            var list = new List<DateTime>();
+            var init = Convert.ToDateTime("08:00:00 AM");
+            list.Add(init);
+            for(int i = 0; i<15; i++)
+            {
+                init = init.AddMinutes(30);
+                list.Add(init);
+            }
+            return list;
+        }
     }
 }

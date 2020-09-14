@@ -24,6 +24,16 @@ a {
   border-color: #1861ac;
 }
 
+.Available-Appointment {
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+
+}
+.Not-Available-Appointment {
+    background-color: darkred;
+    border-color: darkred;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
