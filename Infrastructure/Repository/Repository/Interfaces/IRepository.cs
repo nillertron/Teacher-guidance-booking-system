@@ -10,8 +10,8 @@ namespace Infrastructure.Repository
     {
         Task Create(T entity);
         Task Delete(T entity);
-        Task<List<T>> GetAll(Expression<Func<T, object>>[] includes);
-        Task<T> GetSingle(int id, Expression<Func<T, object>>[] includes);
+        Task<List<T>> GetAll(params Expression<Func<T, object>>[] includes);
+        Task<T> GetSingle(int id, params Expression<Func<T, object>>[] includes);
         Task Update(T entity);
     }
 }

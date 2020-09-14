@@ -1,0 +1,19 @@
+﻿@inject Infrastructure.ApplicationLogic.Person.Concretes.IPersonState state
+@model VejledningsBooking.ViewModel.CalenderViewModel
+@if (state.GetUserType().Result == PersonType.Teacher)
+{
+    @Html.ActionLink("Create Calender", "Create", "Calender", null, new { @class = "btn btn-primary" })
+}
+<section>
+    <form asp-action="Index">
+        <select onchange="this.form.submit()" asp-for="SelectedHoldId">
+            <option disabled selected>-- Select a hold --</option>
+            @foreach (var hold in state.person.HoldLines)
+            {
+                <option value="@hold.Hold.Id">@hold.Hold.Name</option>
+            }
+        </select>
+    </form>
+   
+</section>
+

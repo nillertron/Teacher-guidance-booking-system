@@ -48,10 +48,14 @@ namespace Infrastructure.Repository
         {
             IQueryable<T> query;
             query = table;
-            foreach (var inc in includes)
+            if(includes != null)
             {
-                query.Include(inc);
+                foreach (var inc in includes)
+                {
+                    query.Include(inc);
+                }
             }
+
             var list = await query.ToListAsync();
             return list;
         }
