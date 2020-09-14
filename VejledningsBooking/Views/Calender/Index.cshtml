@@ -16,4 +16,79 @@
     </form>
    
 </section>
+<section>
+    @if (Model != null)
+    {
+        @if (Model.SelectedCalender != null)
+        {
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col"><h5 style="white-space:pre-wrap">Time</h5></th>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <th scope="col"><h5 style="white-space:pre-wrap">@Model.GetDateFormatted(i)</h5></th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">08:00-08:30</h5></td>
+                        @for(int i = 0; i<5; i++)
+                        {
+                            <td>@if (Model.SelectedCalender.Timeslots.Any(x => x.StartDateTime.TimeOfDay == Convert.ToDateTime("08:00:00 AM").TimeOfDay && x.StartDateTime.Date == Model.Dates[i].Date)) { <p>Her</p> } </td>
+                        }
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">08:30-09:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">09:00-09:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">09:30-10:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">10:00-10:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">10:30-11:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">11:00-11:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">11:30-12:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">12:00-12:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">12:30-13:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">13:00-13:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">13:30-14:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">14:00-14:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">14:30-15:00</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">15:00-15:30</h5></td>
+                    </tr>
+                    <tr>
+                        <td><h5 style="white-space:nowrap">15:30-16:00</h5></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        }
+    }
+
+</section>
 

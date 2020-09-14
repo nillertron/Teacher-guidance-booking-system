@@ -17,11 +17,13 @@ namespace VejledningsBooking.Controllers
         private readonly IHoldCRUD holdCRUD;
         private readonly ICalenderCRUD calenderCRUD;
         private readonly IPersonState personState;
-        public CalenderController(IHoldCRUD holdCRUD, ICalenderCRUD calenderCRUD, IPersonState personState)
+        private readonly ICalenderDateManager calenderDateManager;
+        public CalenderController(IHoldCRUD holdCRUD, ICalenderCRUD calenderCRUD, IPersonState personState, ICalenderDateManager calenderDateManager)
         {
             this.holdCRUD = holdCRUD;
             this.calenderCRUD = calenderCRUD;
             this.personState = personState;
+            this.calenderDateManager = calenderDateManager;
         }
         public async Task<IActionResult> Index()
         {
@@ -31,8 +33,9 @@ namespace VejledningsBooking.Controllers
         public async Task<IActionResult> Index([Bind] CalenderViewModel model)
         {
             var hold = await holdCRUD.GetHoldFromId(model.SelectedHoldId);
-            await calenderCRUD.Get(hold);
-            return View();
+            model.SelectedCalender = await calenderCRUD.Get(hold);
+            model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
+            return View(model);
         }
         public async Task<IActionResult> Create()
         {
