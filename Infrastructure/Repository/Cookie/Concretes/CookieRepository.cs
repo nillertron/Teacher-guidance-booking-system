@@ -19,7 +19,7 @@ namespace Infrastructure.Repository.Cookie.Concretes
             var cookie = new Model.StoredCookie();
             await Task.Run(async () =>
             {
-            cookie = await table.Where(x => x.Value == value).Include(x => x.Person).FirstOrDefaultAsync();
+            cookie = table.Where(x => x.Value == value).Include(x => x.Person).FirstOrDefault();
 
             });
             return cookie;
