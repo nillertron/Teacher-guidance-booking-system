@@ -20,49 +20,27 @@ namespace Infrastructure.Repository
         }
         public async Task Create(T entity)
         {
-            
-            await Task.Run(async() =>
-            {
-                await context.AddAsync(entity);
-                await context.SaveChangesAsync();
-
-            });
-
+            await context.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
         public virtual async Task Update(T entity)
         {
-            await Task.Run(async () =>
-            {
-                context.Update(entity);
-                await context.SaveChangesAsync();
-
-            });
-
+            context.Update(entity);
+            await context.SaveChangesAsync();
         }
         public virtual async Task Delete(T entity)
         {
-            await Task.Run(async () =>
-            {
-                context.Remove(entity);
-                await context.SaveChangesAsync();
-
-            });
-
+            context.Remove(entity);
+            await context.SaveChangesAsync();
         }
         public async Task<T> GetSingle(int id, params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query;
             query = table.Where(x => x.Id == id);
-            await Task.Run(async () =>
+            foreach (var inc in includes)
             {
-                foreach (var inc in includes)
-                {
-                    query.Include(inc);
-                }
-
-            });
-
-
+                query.Include(inc);
+            }
 
             return await query.FirstOrDefaultAsync();
         }
@@ -70,20 +48,15 @@ namespace Infrastructure.Repository
         {
             IQueryable<T> query;
             query = table;
-            await Task.Run(async () =>
+            if(includes != null)
             {
-                if (includes != null)
+                foreach (var inc in includes)
                 {
-                    foreach (var inc in includes)
-                    {
-                        query.Include(inc);
-                    }
+                    query.Include(inc);
                 }
+            }
 
-            });
             var list = await query.ToListAsync();
-
-
             return list;
         }
     }
