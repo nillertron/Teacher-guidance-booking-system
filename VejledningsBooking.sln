@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VejledningsBooking", "Vejle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{F865BEF6-9AA8-46ED-A0F8-85D0DB9EF347}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{FFB1A8B8-F182-4AF8-A137-497091ED5A94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{FFB1A8B8-F182-4AF8-A137-497091ED5A94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelTests", "ModelTests\ModelTests.csproj", "{2F3088FE-1085-4754-A21F-0BABC160DA92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{FFB1A8B8-F182-4AF8-A137-497091ED5A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFB1A8B8-F182-4AF8-A137-497091ED5A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFB1A8B8-F182-4AF8-A137-497091ED5A94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F3088FE-1085-4754-A21F-0BABC160DA92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F3088FE-1085-4754-A21F-0BABC160DA92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F3088FE-1085-4754-A21F-0BABC160DA92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F3088FE-1085-4754-A21F-0BABC160DA92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

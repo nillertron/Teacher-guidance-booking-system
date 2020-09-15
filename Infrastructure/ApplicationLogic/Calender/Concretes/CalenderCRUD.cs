@@ -29,5 +29,9 @@ namespace Infrastructure.ApplicationLogic.Calender.Concretes
         {
             return await calenderRepository.GetCalenderWithIncludes(hold);
         }
+        public async Task<Model.Calender> Get(int calenderId)
+        {
+            return await calenderRepository.GetCalenderWithIncludes(calenderId);
+        }
     }
 }

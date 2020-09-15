@@ -1,0 +1,28 @@
+﻿@model VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel
+<div id="CreateTimeslotModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Create booking</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-group" asp-action="Create" method="post" asp-controller="Timeslot">
+                    @Html.ValidationSummary()
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x=>x.Timeslot.CalendarId)
+                    @Html.HiddenFor(x=>x.Timeslot.TeacherId)
+                    <input class="form-control" type="datetime-local" asp-for="Timeslot.StartDateTime" /><br />
+                    <input class="form-control" type="datetime-local" asp-for="Timeslot.EndDateTime" /><br />
+                    @Html.HiddenFor(x => x.CalenderId)
+
+
+                    <button class="btn btn-primary" type="submit">Create</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

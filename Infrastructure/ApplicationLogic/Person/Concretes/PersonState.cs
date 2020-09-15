@@ -77,10 +77,15 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
         }
         public async Task<PersonType> GetUserType()
         {
-            if (person.GetType() == typeof(Model.Teacher))
-                return PersonType.Teacher;
-            else
-                return PersonType.Student;
+            if (person != null)
+            {
+                if (person.GetType() == typeof(Model.Teacher))
+                    return PersonType.Teacher;
+                else
+                    return PersonType.Student;
+            }
+            else throw new Exception("Not logged in");
+
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@model VejledningsBooking.ViewModel.CreateBookingViewModel
-<div id="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal">
+<div id="CreateBookingModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,15 +11,16 @@
             <div class="modal-body">
                 <form asp-action="AttachBooking" method="post" asp-controller="Timeslot">
                     @Html.AntiForgeryToken()
-                    <p>Start time</p>
+                    <h5>Start time</h5>
                     @Html.DisplayFor(x => x.TheBooking.StartDateTime)
-                    <p>End time</p>
+                    <h5>End time</h5>
                     @Html.DisplayFor(x => x.TheBooking.EndDateTime)
-                    <p>With teacher</p>
+                    <h5>With teacher</h5>
                     @Html.DisplayFor(x => x.TheTimeslot.Teacher.FirstName)
                     <input type="hidden" asp-for="TheBooking.EndDateTime" />
                     <input type="hidden" asp-for="TheBooking.StartDateTime" />
                     <input type="hidden" asp-for="TheTimeslot.Id" />
+                    <input type="hidden" asp-for="TheTimeslot.Calendar.Hold[0].Id" /><br />
 
                     <button class="btn btn-primary" type="submit">Book it!</button>
                 </form>

@@ -25,9 +25,36 @@ namespace VejledningsBooking.Controllers
             this.personState = personState;
             this.calenderDateManager = calenderDateManager;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? holdId)
         {
+            if(holdId == null)
+                return View();
+            if (holdId != null)
+            {
+                var model = new CalenderViewModel();
+                var hold = await holdCRUD.GetHoldFromId((int)holdId);
+                model.SelectedCalender = await calenderCRUD.Get(hold);
+                model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
+                model.Hours = await calenderDateManager.GetDailyHourTimes();
+                return View(model);
+            }
             return View();
+
+        }
+        public async Task<IActionResult> View(int? calenderId)
+        {
+            if (calenderId == null)
+                return View();
+            if (calenderId != null)
+            {
+                var model = new CalenderViewModel();
+                model.SelectedCalender = await calenderCRUD.Get((int)calenderId);
+                model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
+                model.Hours = await calenderDateManager.GetDailyHourTimes();
+                return View("Index",model);
+            }
+            return View();
+
         }
         [HttpPost]
         public async Task<IActionResult> Index([Bind] CalenderViewModel model)

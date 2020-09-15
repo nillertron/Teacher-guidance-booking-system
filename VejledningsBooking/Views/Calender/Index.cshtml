@@ -1,10 +1,12 @@
 ﻿@inject Infrastructure.ApplicationLogic.Person.Concretes.IPersonState state
 @model VejledningsBooking.ViewModel.CalenderViewModel
+@{VejledningsBooking.ViewModel.CreateBookingViewModel bookingViewModel = new VejledningsBooking.ViewModel.CreateBookingViewModel();
+    VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel createTimeslotViewModel = new VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel(); }
+
 @if (state.GetUserType().Result == PersonType.Teacher)
 {
     @Html.ActionLink("Create Calender", "Create", "Calender", null, new { @class = "btn btn-primary" })
 }
-@{VejledningsBooking.ViewModel.CreateBookingViewModel bookingViewModel = new VejledningsBooking.ViewModel.CreateBookingViewModel(); }
 <section>
     <form asp-action="Index">
         <select onchange="this.form.submit()" asp-for="SelectedHoldId">
@@ -22,6 +24,13 @@
     {
         @if (Model.SelectedCalender != null)
         {
+            @if (state.GetUserType().Result == PersonType.Teacher)
+            {
+                <button class="btn btn-primary" onclick="ToggleModal('CreateTimeslotModal')" data-toggle="modal" data-target="#CreateTimeslotModal">Create Timeslot</button>
+                createTimeslotViewModel.Timeslot.TeacherId = state.person.Id;
+                createTimeslotViewModel.Timeslot.CalendarId = Model.SelectedCalender.Id;
+
+            }
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
@@ -44,7 +53,7 @@
                                 {
                                     if (appointment.Booking == null)
                                     {
-                                        <td onclick="ToggleModal(); newAJAXcommand('@(bookingViewModel.TheBooking.StartDateTime = appointment.StartDateTime)'); newAJAXcommand('@(bookingViewModel.TheBooking.EndDateTime = appointment.EndDateTime)'); newAJAXcommand('@(bookingViewModel.TheTimeslot = appointment)')" data-toggle="modal" data-target="#modal" style="cursor:pointer" class="Available-Appointment"><p>@appointment.Teacher.FirstName</p></td>
+                                        <td onclick="ToggleModal('CreateBookingModal'); newAJAXcommand('@(bookingViewModel.TheBooking.StartDateTime = appointment.StartDateTime)'); newAJAXcommand('@(bookingViewModel.TheBooking.EndDateTime = appointment.EndDateTime)'); newAJAXcommand('@(bookingViewModel.TheTimeslot = appointment)')" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer" class="Available-Appointment"><p>@appointment.Teacher.FirstName</p></td>
 
                                     }
                                     else
@@ -68,9 +77,11 @@
 
 </section>
 <partial name="~/Views/Booking/Create.cshtml" model="bookingViewModel" />
+<partial name="~/Views/Timeslot/Create.cshtml" model="createTimeslotViewModel" />
+
 <script>
-    function ToggleModal() {
-        $('#modal').modal({
+    function ToggleModal(modalToToggle) {
+        $('#' + modalToToggle).modal({
             show: 'true'
         });
     }
