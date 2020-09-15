@@ -34,7 +34,7 @@ namespace VejledningsBooking
                 o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                 o.EnableSensitiveDataLogging();
                 
-            });
+            }, ServiceLifetime.Transient);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             ConfigureModels(services);
             ConfigureRepositories(services);
