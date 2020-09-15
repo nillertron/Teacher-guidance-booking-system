@@ -63,12 +63,13 @@ namespace VejledningsBooking
             var collection = Assembly.Load(nameof(Infrastructure)).GetTypes().Where(x => x.FullName.Contains("ApplicationLogic") && !x.Name.StartsWith("I") && !x.IsNested).ToList();
             foreach (var c in collection)
             {
-                if(c.Name == "PersonState")
+                var iface = c.GetInterfaces().Where(x => x.Name == "I" + c.Name).First();
+                if (c.Name == "PersonState")
                 {
-                    services.AddScoped(c.GetInterfaces().First(), c);
+                    services.AddScoped(iface, c);
                     continue;
                 }
-                services.AddTransient(c.GetInterfaces().First(), c);
+                services.AddTransient(iface, c);
             }
         }
         private void ConfigureModels(IServiceCollection services)

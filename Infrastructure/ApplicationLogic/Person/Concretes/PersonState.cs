@@ -28,13 +28,17 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
         private async Task CheckForCookie()
         {
             var cookieValue = await cookieCRUD.GetCookieValue("login");
-            if(cookieValue!=null)
+            await Task.Run(async () =>
             {
-                var cookie = await cookieCRUD.GetCookieFromValue(cookieValue);
-                person = cookie.Person;
-                await GetAttachedEntities();
+                if (cookieValue != null)
+                {
+                    var cookie = await cookieCRUD.GetCookieFromValue(cookieValue);
+                    person = cookie.Person;
+                    await GetAttachedEntities();
 
-            }
+                }
+            });
+           
         }
         public async Task AttemptLogin(string username, string password)
         {
