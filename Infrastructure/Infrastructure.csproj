@@ -21,8 +21,6 @@
   <ItemGroup>
     <Folder Include="ApplicationLogic\Booking\Concretes\" />
     <Folder Include="ApplicationLogic\Booking\Interfaces\" />
-    <Folder Include="ApplicationLogic\Timeslot\Concretes\" />
-    <Folder Include="ApplicationLogic\Timeslot\Interfaces\" />
     <Folder Include="Repository\Booking\Concretes\" />
     <Folder Include="Repository\Booking\Interfaces\" />
   </ItemGroup>

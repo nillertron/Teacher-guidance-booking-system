@@ -24,7 +24,7 @@ namespace Infrastructure.ApplicationLogic.Cookie.Concretes
             var options = new CookieOptions();
             options.Expires = DateTime.Now.AddDays(expiredays);
             var value = Guid.NewGuid().ToString();
-            var dbCookie = new StoredCookie { Value = value, Person = person };
+            var dbCookie = new StoredCookie { Value = value, PersonId = person.Id};
             await cookieRepo.Create(dbCookie);
             httpContext.HttpContext.Response.Cookies.Append(key, value, options);
         }

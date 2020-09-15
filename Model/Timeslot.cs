@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Model
@@ -11,6 +12,7 @@ namespace Model
         public Booking Booking { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
+        [Timestamp]
         public byte[] RowVersion { get; set; }
 
        

@@ -1,0 +1,30 @@
+﻿@model VejledningsBooking.ViewModel.CreateBookingViewModel
+<div id="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Create booking</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="AttachBooking" method="post" asp-controller="Timeslot">
+                    @Html.AntiForgeryToken()
+                    <p>Start time</p>
+                    @Html.DisplayFor(x => x.TheBooking.StartDateTime)
+                    <p>End time</p>
+                    @Html.DisplayFor(x => x.TheBooking.EndDateTime)
+                    <p>With teacher</p>
+                    @Html.DisplayFor(x => x.TheTimeslot.Teacher.FirstName)
+                    <input type="hidden" asp-for="TheBooking.EndDateTime" />
+                    <input type="hidden" asp-for="TheBooking.StartDateTime" />
+                    <input type="hidden" asp-for="TheTimeslot.Id" />
+
+                    <button class="btn btn-primary" type="submit">Book it!</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

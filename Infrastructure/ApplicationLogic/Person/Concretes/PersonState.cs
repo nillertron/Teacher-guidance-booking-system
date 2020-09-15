@@ -52,7 +52,16 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
             var type = await GetUserType();
             if(type == PersonType.Student)
             {
-                person = await studentRepository.GetStudentWithIncludes(person.Id);
+                try
+                {
+                    person = await studentRepository.GetStudentWithIncludes(person.Id);
+
+                }
+                catch (Exception ex)
+                {
+
+                    
+                }
             }
             else if(type == PersonType.Teacher)
             {
