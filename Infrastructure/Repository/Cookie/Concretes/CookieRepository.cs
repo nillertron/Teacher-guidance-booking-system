@@ -16,7 +16,13 @@ namespace Infrastructure.Repository.Cookie.Concretes
         }
         public async Task<StoredCookie> GetCookieEntityWithUser(string value)
         {
-            return table.Where(x => x.Value == value).Include(x => x.Person).FirstOrDefault();
+            var cookie = new Model.StoredCookie();
+            await Task.Run(async () =>
+            {
+            cookie = table.Where(x => x.Value == value).Include(x => x.Person).FirstOrDefault();
+
+            });
+            return cookie;
         }
     }
 }

@@ -20,27 +20,49 @@ namespace Infrastructure.Repository
         }
         public async Task Create(T entity)
         {
-            await context.AddAsync(entity);
-            await context.SaveChangesAsync();
+            
+            await Task.Run(async() =>
+            {
+                await context.AddAsync(entity);
+                await context.SaveChangesAsync();
+
+            });
+
         }
         public virtual async Task Update(T entity)
         {
-            context.Update(entity);
-            await context.SaveChangesAsync();
+            await Task.Run(async () =>
+            {
+                context.Update(entity);
+                await context.SaveChangesAsync();
+
+            });
+
         }
         public virtual async Task Delete(T entity)
         {
-            context.Remove(entity);
-            await context.SaveChangesAsync();
+            await Task.Run(async () =>
+            {
+                context.Remove(entity);
+                await context.SaveChangesAsync();
+
+            });
+
         }
         public async Task<T> GetSingle(int id, params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query;
             query = table.Where(x => x.Id == id);
-            foreach (var inc in includes)
+            await Task.Run(async () =>
             {
-                query.Include(inc);
-            }
+                foreach (var inc in includes)
+                {
+                    query.Include(inc);
+                }
+
+            });
+
+
 
             return await query.FirstOrDefaultAsync();
         }
@@ -48,15 +70,20 @@ namespace Infrastructure.Repository
         {
             IQueryable<T> query;
             query = table;
-            if(includes != null)
+            await Task.Run(async () =>
             {
-                foreach (var inc in includes)
+                if (includes != null)
                 {
-                    query.Include(inc);
+                    foreach (var inc in includes)
+                    {
+                        query.Include(inc);
+                    }
                 }
-            }
 
+            });
             var list = await query.ToListAsync();
+
+
             return list;
         }
     }
