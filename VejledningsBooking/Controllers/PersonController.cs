@@ -94,5 +94,11 @@ namespace VejledningsBooking.Controllers
             }
             return NotFound();
         }
+        [HttpGet]
+        public async Task<IActionResult> LogOut()
+        {
+            await personState.LogOff();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

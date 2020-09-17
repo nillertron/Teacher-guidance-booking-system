@@ -1,7 +1,10 @@
 ﻿@inject Infrastructure.ApplicationLogic.Person.Concretes.IPersonState state
 @model VejledningsBooking.ViewModel.CalenderViewModel
 @{VejledningsBooking.ViewModel.CreateBookingViewModel bookingViewModel = new VejledningsBooking.ViewModel.CreateBookingViewModel();
-    VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel createTimeslotViewModel = new VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel(); }
+    bookingViewModel.ThePerson = Model.SelectedPerson;
+    VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel createTimeslotViewModel = new VejledningsBooking.Views.Timeslot.CreateTimeslotViewModel();
+    bookingViewModel.SelectedCalender = Model.SelectedCalender;
+}
 
 @if (state.GetUserType().Result == PersonType.Teacher)
 {
@@ -11,7 +14,7 @@
     <form asp-action="Index">
         <select onchange="this.form.submit()" asp-for="SelectedHoldId">
             <option disabled selected>-- Select a hold --</option>
-            @foreach (var hold in state.person.HoldLines)
+            @foreach (var hold in Model.SelectedPerson.HoldLines)
             {
                 <option value="@hold.Hold.Id">@hold.Hold.Name</option>
             }
@@ -27,7 +30,7 @@
             @if (state.GetUserType().Result == PersonType.Teacher)
             {
                 <button class="btn btn-primary" onclick="ToggleModal('CreateTimeslotModal')" data-toggle="modal" data-target="#CreateTimeslotModal">Create Timeslot</button>
-                createTimeslotViewModel.Timeslot.TeacherId = state.person.Id;
+                createTimeslotViewModel.Timeslot.TeacherId = Model.SelectedPerson.Id;
                 createTimeslotViewModel.Timeslot.CalendarId = Model.SelectedCalender.Id;
 
             }
@@ -44,29 +47,29 @@
                 <tbody>
                     @for (int j = 0; j < Model.Hours.Count; j++)
                     {
-                        <tr>
-                            <td><h5 style="white-space:nowrap">@Model.Hours[j].ToString("HH:mm") - @Model.Hours[j].AddMinutes(30).ToString("HH:mm")</h5></td>
-                            @for (int i = 0; i < 5; i++)
+                    <tr>
+                        <td><h5 style="white-space:nowrap">@Model.Hours[j].ToString("HH:mm") - @Model.Hours[j].AddMinutes(30).ToString("HH:mm")</h5></td>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            var appointment = Model.SelectedCalender.Timeslots.FirstOrDefault(y => Model.SelectedCalender.Timeslots.Any(x => y.StartDateTime.TimeOfDay == Model.Hours[j].TimeOfDay && y.StartDateTime.Date == Model.Dates[i].Date));
+                            @if (appointment != null)
                             {
-                                var appointment = Model.SelectedCalender.Timeslots.FirstOrDefault(y => Model.SelectedCalender.Timeslots.Any(x => y.StartDateTime.TimeOfDay == Model.Hours[j].TimeOfDay && y.StartDateTime.Date == Model.Dates[i].Date));
-                                @if (appointment != null)
+                                if (appointment.Booking == null)
                                 {
-                                    if (appointment.Booking == null)
-                                    {
-                                        <td onclick="ToggleModal('CreateBookingModal'); newAJAXcommand('@(bookingViewModel.TheBooking.StartDateTime = appointment.StartDateTime)'); newAJAXcommand('@(bookingViewModel.TheBooking.EndDateTime = appointment.EndDateTime)'); newAJAXcommand('@(bookingViewModel.TheTimeslot = appointment)')" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer" class="Available-Appointment"><p>@appointment.Teacher.FirstName</p></td>
+                                    <td id="@appointment.Id" onclick="ToggleModal('CreateBookingModal'); retrieveId(this);" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer; color:white;" class="Available-Appointment text-center"><p>Teacher: @appointment.Teacher.FirstName</p></td>
 
-                                    }
-                                    else
-                                    {
-                                        <td class="Not-Available-Appointment">Reserved by @appointment.Booking.Student.FirstName</td>
-                                    }
                                 }
                                 else
                                 {
-                                    <td></td>
+                                    <td class="Not-Available-Appointment text-center" style="color:white;">Reserved by @appointment.Booking.Student.FirstName</td>
                                 }
                             }
-                        </tr>
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
 
                     }
                 </tbody>
@@ -80,9 +83,14 @@
 <partial name="~/Views/Timeslot/Create.cshtml" model="createTimeslotViewModel" />
 
 <script>
+    function retrieveId(id) {
+        var storedId = id.id;
+        document.getElementById('TimeslotHiddenId').value = storedId;
+        ajaxGetTimeslot(storedId);
+    }
     function ToggleModal(modalToToggle) {
         $('#' + modalToToggle).modal({
-            show: 'true'
+            show: true
         });
     }
 

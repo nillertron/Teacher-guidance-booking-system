@@ -7,5 +7,6 @@ namespace Infrastructure.Repository
     {
         Task Delete(Timeslot entity);
         Task Update(Timeslot entity);
+        Task<Timeslot> GetWithIncludes(int id);
     }
 }

@@ -32,8 +32,6 @@ namespace VejledningsBooking
             services.AddDbContext<VejledningsContext>(o =>
             {
                 o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-                o.EnableSensitiveDataLogging();
-                
             }, ServiceLifetime.Transient);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             ConfigureModels(services);
@@ -100,7 +98,6 @@ namespace VejledningsBooking
             app.UseRouting();
 
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

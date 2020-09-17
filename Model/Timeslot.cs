@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Model
 {
-    public class Timeslot : BaseEntity, IRowVersion
+    public class Timeslot : BaseEntity
     {
         public int TeacherId { get; set; }
         public Teacher Teacher { get; set; }
@@ -16,6 +16,7 @@ namespace Model
 
         public DateTime EndDateTime { get; set; } = DateTime.Now;
         [Timestamp]
+        [ConcurrencyCheck]
         public byte[] RowVersion { get; set; }
 
         public void ValidateDates()
@@ -37,6 +38,11 @@ namespace Model
                 throw new Exception("Start day must be in the future");
             if (startDateTime > endDateTIme)
                 throw new Exception("Start date cannot be greater than end date");
+        }
+        public void RemoveSeconds()
+        {
+            StartDateTime = new DateTime(StartDateTime.Year, StartDateTime.Month, StartDateTime.Day, StartDateTime.Hour, StartDateTime.Minute, 0);
+            EndDateTime = new DateTime(EndDateTime.Year, EndDateTime.Month, EndDateTime.Day, EndDateTime.Hour, EndDateTime.Minute, 0);
         }
        
     }

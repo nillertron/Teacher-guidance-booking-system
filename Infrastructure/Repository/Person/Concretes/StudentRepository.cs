@@ -16,7 +16,7 @@ namespace Infrastructure.Repository.Concretes
         }
         public async Task<Student> GetStudentWithIncludes(int id)
         {
-            return await context.Students.Where(x => x.Id == id).Include(x=>x.HoldLines).ThenInclude(x=>x.Hold).FirstOrDefaultAsync();
+            return await context.Students.Where(x => x.Id == id).Include(x=>x.HoldLines).ThenInclude(x=>x.Hold).Include(x=>x.Bookings).FirstOrDefaultAsync();
         }
     }
 }

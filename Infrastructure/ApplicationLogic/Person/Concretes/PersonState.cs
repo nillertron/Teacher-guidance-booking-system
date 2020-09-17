@@ -13,17 +13,30 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
     {
         private bool IsLoggedIn = false;
         private readonly IPersonRepository personRepository;
-        public Model.Person person { get; private set; }
+        private Model.Person person;
         private readonly ICookieCRUD cookieCRUD;
         private readonly ITeacherRepository teacherRepository;
         private readonly IStudentRepository studentRepository;
+        private bool FirstRender = true;
+        string d = string.Empty;
         public PersonState(IPersonRepository personRepository, ICookieCRUD cookieCrud, ITeacherRepository teacherRepo, IStudentRepository studenRepo)
         {
             this.personRepository = personRepository;
             this.cookieCRUD = cookieCrud;
             this.teacherRepository = teacherRepo;
             this.studentRepository = studenRepo;
-            CheckForCookie();
+        }
+        public async Task<Model.Person> GetPersonAsync()
+        {
+            if(person == null)
+            {
+                await CheckForCookie();
+                if (person == null)
+                    throw new Exception("Person not logged in");
+
+            }
+            return person;
+
         }
         private async Task CheckForCookie()
         {
@@ -33,7 +46,7 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
                 var cookie = await cookieCRUD.GetCookieFromValue(cookieValue);
                 person = cookie.Person;
                 await GetAttachedEntities();
-
+                FirstRender = false;
             }
         }
         public async Task AttemptLogin(string username, string password)
@@ -52,16 +65,9 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
             var type = await GetUserType();
             if(type == PersonType.Student)
             {
-                try
-                {
                     person = await studentRepository.GetStudentWithIncludes(person.Id);
 
-                }
-                catch (Exception ex)
-                {
 
-                    
-                }
             }
             else if(type == PersonType.Teacher)
             {
@@ -70,6 +76,7 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
         }
         public async Task<LoginState> GetLoginState()
         {
+            await CheckForCookie();
             if (person != null)
                 return LoginState.LoggedIn;
             else
@@ -77,6 +84,11 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
         }
         public async Task<PersonType> GetUserType()
         {
+            if (FirstRender)
+            {
+                FirstRender = false;
+                await CheckForCookie();
+            }
             if (person != null)
             {
                 if (person.GetType() == typeof(Model.Teacher))
@@ -86,6 +98,14 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
             }
             else throw new Exception("Not logged in");
 
+        }
+        public async Task LogOff()
+        {
+            await CheckForCookie();
+            if(person != null)
+            {
+                await cookieCRUD.DeleteCookie("login");
+            }
         }
     }
 }

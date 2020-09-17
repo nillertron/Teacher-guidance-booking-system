@@ -14,7 +14,7 @@ namespace VejledningsBooking.ViewModel
         public Calender SelectedCalender { get; set; }
         public List<DateTime> Dates { get; set; }
         public List<DateTime> Hours { get; set; }
-
+        public Person SelectedPerson { get; set; }
         public string GetDateFormatted(int index)
         {
             var stringToReturn = Dates[index].Date.ToString("dd-MM-yyyy");
@@ -22,6 +22,7 @@ namespace VejledningsBooking.ViewModel
             stringToReturn += Dates[index].DayOfWeek.ToString();
             return stringToReturn;
         }
+
         
     }
 }

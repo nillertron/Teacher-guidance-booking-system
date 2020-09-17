@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.ApplicationLogic.Timeslot.Concretes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using VejledningsBooking.ViewModel;
 using VejledningsBooking.Views.Timeslot;
 
@@ -26,16 +28,18 @@ namespace VejledningsBooking.Controllers
             {
                 try
                 {
+                    
                     await timeslotCrud.Create(model.Timeslot);
-                    return RedirectToAction("View", "Calender", new { calenderId = model.Timeslot.CalendarId });
+                    // return RedirectToAction("View", "Calender", new { calenderId = model.Timeslot.CalendarId });
+                    return StatusCode(200);
                 }
                 catch (Exception ex)
                 {
-
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    
+                    return BadRequest(new { Message = ex.Message });
                 }
             }
-            return View();
+            return BadRequest(new { Message = "state not valid" });
         }
         [HttpPost]
         [AutoValidateAntiforgeryToken]
@@ -45,18 +49,29 @@ namespace VejledningsBooking.Controllers
             {
                 try
                 {
+
+                    model.TheBooking.StartDateTime = DateTime.Parse(model.dt1);
+                    model.TheBooking.EndDateTime = DateTime.Parse(model.dt2);
+                    model.TheTimeslot.StartDateTime = DateTime.Parse(model.dt1);
+                    model.TheTimeslot.EndDateTime = DateTime.Parse(model.dt2);
+
                     await bookTimeslot.TryBookTimeslot(model.TheTimeslot, model.TheBooking);
-                    var hold = model.TheTimeslot.Calendar.Hold[0];
-                    return RedirectToAction("Index", "Calender", new { holdId = hold.Id });
+                    return StatusCode(200);
+
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return BadRequest(new { Message = ex.Message });
 
                 }
                 catch (Exception ex)
                 {
 
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return BadRequest(new { Message = ex.Message });
                 }
+
             }
-            return RedirectToAction("Index", "Calender");
+            return BadRequest(new { Message = "State not valid" });
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Model;
+﻿using Microsoft.EntityFrameworkCore;
+using Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,17 +14,24 @@ namespace Infrastructure.Repository
         {
 
         }
-
+        public async Task<Timeslot> GetWithIncludes(int id)
+        {
+            return await context.Timeslots.Where(x => x.Id == id).Include(x => x.Booking).Include(x => x.Teacher).Include(x => x.Calendar).FirstOrDefaultAsync();
+        }
         public override async Task Update(Timeslot entity)
         {
-            context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            await base.Update(entity);
-        }
-        public override async Task Delete(Timeslot entity)
-        {
+            context.Entry(entity).State = EntityState.Modified;
 
-            context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            await base.Delete(entity);
+            try
+            {
+                context.Timeslots.Update(entity);
+                await context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+
         }
 
     }

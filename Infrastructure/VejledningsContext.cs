@@ -22,5 +22,6 @@ namespace Infrastructure
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Timeslot> Timeslots { get; set; }
         public DbSet<StoredCookie> StoredCookies { get; set; }
+        
     }
 }

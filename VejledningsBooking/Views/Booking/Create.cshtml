@@ -8,24 +8,68 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form asp-action="AttachBooking" method="post" asp-controller="Timeslot">
+            <div id="createBookingModalbody" class="modal-body">
+                <form id="createBookingForm" action="Timeslot/AttachBooking" method="post">
                     @Html.AntiForgeryToken()
                     <h5>Start time</h5>
-                    @Html.DisplayFor(x => x.TheBooking.StartDateTime)
+                    <label asp-for="TheBooking.StartDateTime" id="bookStartTime"></label>
+                    <input type="hidden" asp-for="dt1" id="hiddenbookStartTime" />
                     <h5>End time</h5>
-                    @Html.DisplayFor(x => x.TheBooking.EndDateTime)
+                    <label id="bookEndTime"></label>
+                    <input type="hidden" asp-for="dt2" id="hiddenbookEndTime" />
+
                     <h5>With teacher</h5>
-                    @Html.DisplayFor(x => x.TheTimeslot.Teacher.FirstName)
-                    <input type="hidden" asp-for="TheBooking.EndDateTime" />
-                    <input type="hidden" asp-for="TheBooking.StartDateTime" />
-                    <input type="hidden" asp-for="TheTimeslot.Id" />
-                    <input type="hidden" asp-for="TheTimeslot.Calendar.Hold[0].Id" /><br />
+                    <label id="lblFirstnameTeacher" asp-for="ThePerson.FirstName"></label>
+                    <input id="rowVersion" type="hidden" asp-for="TheTimeslot.RowVersion" />
+                    <input type="hidden" id="TimeslotHiddenId" asp-for="TheTimeslot.Id" />
+                    <input id="selectedHiddenCalenderId" type="hidden" asp-for="SelectedCalender.Id" /><br />
+                    @if (Model.ThePerson.GetType() == typeof(Model.Student))
+                    {
+                        <button class="btn btn-primary" type="button" onclick="PostWithoutRefresh(this,'createBookingModalbody');">Book it!</button>
 
-                    <button class="btn btn-primary" type="submit">Book it!</button>
+                    }
                 </form>
-
+                <div id="result"></div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function ajaxGetTimeslot(id) {
+        $.ajax({
+            type: "GET",
+            url: "Booking/TimeslotAjaxGet?id=" + id,
+            contentType: 'json',
+            success: function (response) {
+                var dt1 = GetDateTimeFromString(response.theTimeslot.startDateTime);
+                var dt2 = GetDateTimeFromString(response.theTimeslot.endDateTime);
+
+                var printableStartDate = dt1.getDate() + '/' + dt1.getMonth() + '/' + dt1.getFullYear() + ' ' + dt1.getHours() + ':' + dt1.getMinutes();
+                var printableEndDate = dt2.getDate() + '/' + dt2.getMonth() + '/' + dt2.getFullYear() + ' ' + dt2.getHours() + ':' + dt2.getMinutes();
+
+
+                document.getElementById('bookStartTime').innerHTML = printableStartDate;
+                document.getElementById('bookEndTime').innerHTML = printableEndDate;
+                document.getElementById('hiddenbookStartTime').value = printableStartDate;
+                document.getElementById('hiddenbookEndTime').value = printableEndDate;
+                document.getElementById('rowVersion').innerHTML = response.theTimeslot.rowVersion;
+                document.getElementById('lblFirstnameTeacher').innerHTML = response.thePerson.firstName;
+
+
+
+            }
+        });
+    }
+    function GetDateTimeFromString(input) {
+        var dt = input.replace(/[^0-9 :]/g, '');
+        var year = dt.substring(0, 4);
+        var month = dt.substring(4, 6);
+        var date = dt.substring(6, 8);
+        var hour = dt.substring(8, 10);
+        var minute = dt.substring(11, 13);
+        var dateTimeToReturn = new Date();
+        dateTimeToReturn.setFullYear(year, month, date);
+        dateTimeToReturn.setHours(hour, minute, 0);
+        return dateTimeToReturn;
+    }
+</script>

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Model
 {
     public class Student:Person
     {
-        public readonly List<Booking> Bookings;
+        public List<Booking> Bookings { get; private set; }
         public Student()
         {
             Bookings = new List<Booking>();
@@ -20,7 +21,15 @@ namespace Model
             }
             else
             {
+                CheckForDuplicateBooking(booking);
                 Bookings.Add(booking);
+            }
+        }
+        private void CheckForDuplicateBooking(Booking booking)
+        {
+            if(Bookings.Any(x=>x.StartDateTime - booking.StartDateTime < TimeSpan.FromSeconds(30) && x.StartDateTime - booking.StartDateTime > TimeSpan.FromSeconds(-30)))
+            {
+                throw new Exception("Duplicate booking!");
             }
         }
         private int GetFutureBookingCount()

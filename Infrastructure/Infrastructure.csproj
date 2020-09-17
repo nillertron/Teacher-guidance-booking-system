@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200916130438_rowversion.cs" />
+    <Compile Remove="Migrations\20200916130438_rowversion.Designer.cs" />
+    <Compile Remove="Migrations\20200916130557_rv.cs" />
+    <Compile Remove="Migrations\20200916130557_rv.Designer.cs" />
+    <Compile Remove="Migrations\20200916191512_concurr.cs" />
+    <Compile Remove="Migrations\20200916191512_concurr.Designer.cs" />
+    <Compile Remove="Migrations\20200916192042_concurr1.cs" />
+    <Compile Remove="Migrations\20200916192042_concurr1.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-preview.8.20407.4" />

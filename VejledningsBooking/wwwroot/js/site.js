@@ -26,3 +26,22 @@ function CreateTextFieldForForm(id, name, placeholder) {
     textfield.placeholder = placeholder;
     return textfield;
 }
+
+
+    function PostWithoutRefresh(buttonClicked, modal) {
+        var $form = $(buttonClicked).parents('form');
+        $.ajax({
+        type: "POST",
+            url: $form.attr('action'),
+            data: $form.serialize(),
+            error: function (xhr, status, errorcode) {
+                var result = JSON.parse(xhr.responseText);
+
+
+                document.getElementById(modal).innerHTML += result.message;
+            },
+            success: function (response) {
+        window.parent.location.reload();
+            }
+        });
+    }

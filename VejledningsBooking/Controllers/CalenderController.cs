@@ -27,18 +27,21 @@ namespace VejledningsBooking.Controllers
         }
         public async Task<IActionResult> Index(int? holdId)
         {
-            if(holdId == null)
-                return View();
-            if (holdId != null)
+            var model = new CalenderViewModel();
+            if (holdId == null)
             {
-                var model = new CalenderViewModel();
+                model.SelectedPerson = await personState.GetPersonAsync();
+
+            }
+            else
+            {
                 var hold = await holdCRUD.GetHoldFromId((int)holdId);
                 model.SelectedCalender = await calenderCRUD.Get(hold);
                 model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
                 model.Hours = await calenderDateManager.GetDailyHourTimes();
-                return View(model);
+                model.SelectedPerson = await personState.GetPersonAsync();
             }
-            return View();
+            return View(model);
 
         }
         public async Task<IActionResult> View(int? calenderId)
@@ -51,6 +54,7 @@ namespace VejledningsBooking.Controllers
                 model.SelectedCalender = await calenderCRUD.Get((int)calenderId);
                 model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
                 model.Hours = await calenderDateManager.GetDailyHourTimes();
+                model.SelectedPerson = await personState.GetPersonAsync();
                 return View("Index",model);
             }
             return View();
@@ -63,6 +67,7 @@ namespace VejledningsBooking.Controllers
             model.SelectedCalender = await calenderCRUD.Get(hold);
             model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
             model.Hours = await calenderDateManager.GetDailyHourTimes();
+            model.SelectedPerson = await personState.GetPersonAsync();
             return View(model);
         }
         public async Task<IActionResult> Create()
