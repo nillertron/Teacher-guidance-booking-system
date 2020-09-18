@@ -1,21 +1,13 @@
 ﻿@model VejledningsBooking.ViewModel.CalenderViewModel
 @inject Infrastructure.ApplicationLogic.Person.Concretes.IPersonState state
-
 <div class="row">
     <div class="col-12">
         <div class="float-left">
-            <form asp-action="PrevWeek">
-                <input type="hidden" asp-for="SelectedHoldId" />
+            <a asp-action="PrevWeek" asp-controller="Calender" asp-route-week="@Model.PreviousWeek" asp-route-holdid="@Model.SelectedHoldId" class="btn btn-primary">&lt;</a>
 
-                <button type="submit" class="btn btn-primary">&lsaquo;</button>
-            </form>
         </div>
         <div class="float-right">
-            <form asp-action="NextWeek">
-                <input type="hidden" asp-for="SelectedHoldId" />
-
-                <button type="submit" class="btn btn-primary">&gt;</button>
-            </form>
+                <a asp-action="NextWeek" asp-controller="Calender" asp-route-week="@Model.NextWeek" asp-route-holdid="@Model.SelectedHoldId" class="btn btn-primary">&gt;</a>
         </div>
     </div>
 </div>

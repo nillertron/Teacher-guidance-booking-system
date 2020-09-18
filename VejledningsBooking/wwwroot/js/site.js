@@ -66,8 +66,8 @@ function ajaxGetTimeslot(id) {
             var dt1 = GetDateTimeFromString(response.theTimeslot.startDateTime);
             var dt2 = GetDateTimeFromString(response.theTimeslot.endDateTime);
 
-            var printableStartDate = dt1.getDate() + '/' + dt1.getMonth() + '/' + dt1.getFullYear() + ' ' + dt1.getHours() + ':' + dt1.getMinutes();
-            var printableEndDate = dt2.getDate() + '/' + dt2.getMonth() + '/' + dt2.getFullYear() + ' ' + dt2.getHours() + ':' + dt2.getMinutes();
+            var printableStartDate = days_with_leading_zeros(dt1) + '/' + months_with_leading_zeros(dt1) + '/' + dt1.getFullYear() + ' ' + hours_with_leading_zeros(dt1) + ':' + minutes_with_leading_zeros(dt1);
+            var printableEndDate = days_with_leading_zeros(dt2) + '/' + months_with_leading_zeros(dt2) + '/' + dt2.getFullYear() + ' ' + hours_with_leading_zeros(dt2) + ':' + minutes_with_leading_zeros(dt2);
 
 
             document.getElementById('bookStartTime').innerHTML = printableStartDate;
@@ -81,6 +81,18 @@ function ajaxGetTimeslot(id) {
 
         }
     });
+}
+function minutes_with_leading_zeros(dt) {
+    return (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+}
+function hours_with_leading_zeros(dt) {
+    return (dt.getHours() < 10 ? '0' : '') + dt.getHours();
+}
+function days_with_leading_zeros(dt) {
+    return (dt.getDate() < 10 ? '0' : '') + dt.getDate();
+}
+function months_with_leading_zeros(dt) {
+    return (dt.getMonth() < 10 ? '0' : '') + dt.getMonth();
 }
 function GetDateTimeFromString(input) {
     var dt = input.replace(/[^0-9 :]/g, '');

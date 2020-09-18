@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Infrastructure.ApplicationLogic.Calender.Concretes;
 using Infrastructure.ApplicationLogic.Hold.Concretes;
@@ -28,7 +29,6 @@ namespace VejledningsBooking.Controllers
         public async Task<IActionResult> Index(int? holdId)
         {
             var model = new CalenderViewModel();
-            model.WeekToDisplay = DateTime.Now;
             if (holdId == null)
             {
                 model.SelectedPerson = await personState.GetPersonAsync();
@@ -52,7 +52,6 @@ namespace VejledningsBooking.Controllers
             if (calenderId != null)
             {
                 var model = new CalenderViewModel();
-                model.WeekToDisplay = DateTime.Now;
                 model.SelectedCalender = await calenderCRUD.Get((int)calenderId);
                 model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
                 model.Hours = await calenderDateManager.GetDailyHourTimes();
@@ -65,7 +64,6 @@ namespace VejledningsBooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Index([Bind] CalenderViewModel model)
         {
-            model.WeekToDisplay = DateTime.Now;
             var hold = await holdCRUD.GetHoldFromId(model.SelectedHoldId);
             model.SelectedCalender = await calenderCRUD.Get(hold);
             model.Dates = await calenderDateManager.Get5Weekdays(DateTime.Now);
@@ -73,24 +71,34 @@ namespace VejledningsBooking.Controllers
             model.SelectedPerson = await personState.GetPersonAsync();
             return View(model);
         }
-        [HttpPost]
-        public async Task<IActionResult> NextWeek([Bind] CalenderViewModel model)
+        [HttpGet]
+        public async Task<IActionResult> NextWeek(int week, int holdId)
         {
-            var hold = await holdCRUD.GetHoldFromId(model.SelectedHoldId);
+            var model = new CalenderViewModel();
+            var hold = await holdCRUD.GetHoldFromId(holdId);
             model.SelectedCalender = await calenderCRUD.Get(hold);
-            model.Dates = await calenderDateManager.Get5Weekdays(await calenderDateManager.Add7DaysAndGetDate());
-            model.Hours = await calenderDateManager.GetDailyHourTimes();
             model.SelectedPerson = await personState.GetPersonAsync();
+            if (!hold.HoldLinjer.Any(x => x.Person.Id == model.SelectedPerson.Id))
+                return BadRequest("You do not belong here :(");
+            model.SelectedHoldId = hold.Id;
+            model.CurrentWeek = week;
+            model.Dates = await calenderDateManager.Get5Weekdays(await calenderDateManager.Add7DaysAndGetDate(week));
+            model.Hours = await calenderDateManager.GetDailyHourTimes();
             return View("Index",model);
         }
-        [HttpPost]
-        public async Task<IActionResult> PrevWeek([Bind] CalenderViewModel model)
+        [HttpGet]
+        public async Task<IActionResult> PrevWeek(int week, int holdId)
         {
-            var hold = await holdCRUD.GetHoldFromId(model.SelectedHoldId);
-            model.SelectedCalender = await calenderCRUD.Get(hold);
-            model.Dates = await calenderDateManager.Get5Weekdays(await calenderDateManager.Subtract7DaysAndGetDate());
-            model.Hours = await calenderDateManager.GetDailyHourTimes();
+            var model = new CalenderViewModel();
+            var hold = await holdCRUD.GetHoldFromId(holdId);
             model.SelectedPerson = await personState.GetPersonAsync();
+            if (!hold.HoldLinjer.Any(x => x.Person.Id == model.SelectedPerson.Id))
+                return BadRequest("You do not belong here :(");
+            model.SelectedHoldId = hold.Id;
+            model.CurrentWeek = week;
+            model.SelectedCalender = await calenderCRUD.Get(hold);
+            model.Dates = await calenderDateManager.Get5Weekdays(await calenderDateManager.Subtract7DaysAndGetDate(week));
+            model.Hours = await calenderDateManager.GetDailyHourTimes();
             return View("Index",model);
         }
         public async Task<IActionResult> Create()

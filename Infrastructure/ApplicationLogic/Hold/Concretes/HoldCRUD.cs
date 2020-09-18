@@ -9,16 +9,16 @@ namespace Infrastructure.ApplicationLogic.Hold.Concretes
 {
     public class HoldCRUD : IHoldCRUD
     {
-        private readonly IRepository<Model.Hold> repository;
+        private readonly IHoldRepository holdRepository;
         private readonly IHoldLinjeRepository holdLinjeRepository;
-        public HoldCRUD(IRepository<Model.Hold> repository, IHoldLinjeRepository holdLinjeRepository)
+        public HoldCRUD(IHoldRepository holdRepository, IHoldLinjeRepository holdLinjeRepository)
         {
-            this.repository = repository;
+            this.holdRepository = holdRepository;
             this.holdLinjeRepository = holdLinjeRepository;
         }
         public async Task<List<Model.Hold>> GetAllHold()
         {
-            return await repository.GetAll(null);
+            return await holdRepository.GetAll(null);
         }
         public async Task<List<Model.Hold>> GetAllHoldForPerson(Model.Person person)
         {
@@ -32,7 +32,7 @@ namespace Infrastructure.ApplicationLogic.Hold.Concretes
         }
         public async Task<Model.Hold>GetHoldFromId(int id)
         {
-            return await repository.GetSingle(id);
+            return await holdRepository.GetHoldWithIncludes(id);
         }
     }
 }

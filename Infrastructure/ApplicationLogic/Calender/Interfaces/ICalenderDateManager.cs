@@ -6,11 +6,9 @@ namespace Infrastructure.ApplicationLogic.Calender.Concretes
 {
     public interface ICalenderDateManager
     {
-        DateTime CurrentDisplayWeek { get; }
-
-        Task<DateTime> Add7DaysAndGetDate();
+        Task<DateTime> Add7DaysAndGetDate(int howManyWeeksToAdd);
         Task<List<DateTime>> Get5Weekdays(DateTime weekToGetDays);
         Task<List<DateTime>> GetDailyHourTimes();
-        Task<DateTime> Subtract7DaysAndGetDate();
+        Task<DateTime> Subtract7DaysAndGetDate(int howManyWeeksToSubtract);
     }
 }

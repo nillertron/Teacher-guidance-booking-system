@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div id="createBookingModalbody" class="modal-body">
-                <form id="createBookingForm" action="Timeslot/AttachBooking" method="post">
+                <form id="createBookingForm" action="../Timeslot/AttachBooking" method="post">
                     @Html.AntiForgeryToken()
                     <h5>Start time</h5>
                     <label asp-for="TheBooking.StartDateTime" id="bookStartTime"></label>

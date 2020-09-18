@@ -7,7 +7,6 @@ namespace Infrastructure.ApplicationLogic.Calender.Concretes
 {
     public class CalenderDateManager : ICalenderDateManager
     {
-        public DateTime CurrentDisplayWeek { get; private set; } = DateTime.Now;
         public async Task<List<DateTime>> Get5Weekdays(DateTime weekToGetDays)
         {
             var monday = await FindMondayInWeek(weekToGetDays);
@@ -54,15 +53,19 @@ namespace Infrastructure.ApplicationLogic.Calender.Concretes
             }
             return list;
         }
-        public async Task<DateTime> Add7DaysAndGetDate()
+        public async Task<DateTime> Add7DaysAndGetDate(int howManyWeeksToAdd)
         {
-            CurrentDisplayWeek += TimeSpan.FromDays(7);
-            return CurrentDisplayWeek;
+            if (howManyWeeksToAdd == 0)
+                return DateTime.Now;
+            var currentDisplayWeek = DateTime.Now.AddDays(7*howManyWeeksToAdd);
+            return currentDisplayWeek;
         }
-        public async Task<DateTime> Subtract7DaysAndGetDate()
+        public async Task<DateTime> Subtract7DaysAndGetDate(int howManyWeeksToSubtract)
         {
-            CurrentDisplayWeek -= TimeSpan.FromDays(7);
-            return CurrentDisplayWeek;
+            if (howManyWeeksToSubtract == 0)
+                return DateTime.Now;
+            var currentDisplayWeek = DateTime.Now.AddDays(7 * howManyWeeksToSubtract);
+            return currentDisplayWeek;
         }
     }
 }
