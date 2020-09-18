@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Repository.Hold.Concretes
 {
-    interface IHoldRepository:IRepository<Model.Hold>
+    public interface IHoldRepository:IRepository<Model.Hold>
     {
         Task DummyMethod();
     }

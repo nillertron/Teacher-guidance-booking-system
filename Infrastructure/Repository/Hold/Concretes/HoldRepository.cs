@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository.Hold.Concretes
 {
-    class HoldRepository : Repository<Model.Hold>, IHoldRepository
+    public class HoldRepository : Repository<Model.Hold>, IHoldRepository
     {
         public HoldRepository(VejledningsContext context) : base(context)
         {

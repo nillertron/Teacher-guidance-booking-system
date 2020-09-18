@@ -8,6 +8,8 @@ namespace Model
     {
         public string Name { get; set; }
         public List<HoldLinjer> HoldLinjer { get; set; }
+        public int? CalenderId { get; set; }
+        public Calender Calender { get; set; }
 
     }
 }

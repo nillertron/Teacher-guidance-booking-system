@@ -29,69 +29,21 @@
         {
             @if (state.GetUserType().Result == PersonType.Teacher)
             {
-                <button class="btn btn-primary" onclick="ToggleModal('CreateTimeslotModal')" data-toggle="modal" data-target="#CreateTimeslotModal">Create Timeslot</button>
-                createTimeslotViewModel.Timeslot.TeacherId = Model.SelectedPerson.Id;
-                createTimeslotViewModel.Timeslot.CalendarId = Model.SelectedCalender.Id;
-
-            }
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col"><h5 style="white-space:pre-wrap">Time</h5></th>
-                        @for (int i = 0; i < 5; i++)
-                        {
-                            <th scope="col"><h5 style="white-space:pre-wrap">@Model.GetDateFormatted(i)</h5></th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int j = 0; j < Model.Hours.Count; j++)
-                    {
-                    <tr>
-                        <td><h5 style="white-space:nowrap">@Model.Hours[j].ToString("HH:mm") - @Model.Hours[j].AddMinutes(30).ToString("HH:mm")</h5></td>
-                        @for (int i = 0; i < 5; i++)
-                        {
-                            var appointment = Model.SelectedCalender.Timeslots.FirstOrDefault(y => Model.SelectedCalender.Timeslots.Any(x => y.StartDateTime.TimeOfDay == Model.Hours[j].TimeOfDay && y.StartDateTime.Date == Model.Dates[i].Date));
-                            @if (appointment != null)
-                            {
-                                if (appointment.Booking == null)
-                                {
-                                    <td id="@appointment.Id" onclick="ToggleModal('CreateBookingModal'); retrieveId(this);" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer; color:white;" class="Available-Appointment text-center"><p>Teacher: @appointment.Teacher.FirstName</p></td>
-
-                                }
-                                else
-                                {
-                                    <td class="Not-Available-Appointment text-center" style="color:white;">Reserved by @appointment.Booking.Student.FirstName</td>
-                                }
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                        }
-                    </tr>
-
-                    }
-                </tbody>
-            </table>
+    <div style="display:block">
+        <button class="btn btn-primary" onclick="ToggleModal('CreateTimeslotModal')" data-toggle="modal" data-target="#CreateTimeslotModal">Create Timeslot</button>
+        @{ 
+            createTimeslotViewModel.Timeslot.TeacherId = Model.SelectedPerson.Id;
+            createTimeslotViewModel.Timeslot.CalendarId = Model.SelectedCalender.Id;
+        }
+        </div>
 
         }
-    }
+        <partial name="~/Views/Calender/SchemaPartial.cshtml" model="Model" />
+
+        }
+        }
 
 </section>
 <partial name="~/Views/Booking/Create.cshtml" model="bookingViewModel" />
 <partial name="~/Views/Timeslot/Create.cshtml" model="createTimeslotViewModel" />
 
-<script>
-    function retrieveId(id) {
-        var storedId = id.id;
-        document.getElementById('TimeslotHiddenId').value = storedId;
-        ajaxGetTimeslot(storedId);
-    }
-    function ToggleModal(modalToToggle) {
-        $('#' + modalToToggle).modal({
-            show: true
-        });
-    }
-
-</script>

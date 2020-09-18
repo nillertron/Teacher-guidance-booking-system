@@ -18,21 +18,14 @@ namespace Infrastructure.Repository
         {
             return await context.Timeslots.Where(x => x.Id == id).Include(x => x.Booking).Include(x => x.Teacher).Include(x => x.Calendar).FirstOrDefaultAsync();
         }
-        public override async Task Update(Timeslot entity)
+        public async Task UpdateWithConcurrencyCheck(Timeslot entity)
         {
-            context.Entry(entity).State = EntityState.Modified;
-
-            try
-            {
-                context.Timeslots.Update(entity);
-                await context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                throw;
-            }
-
+           var result = context.Database.ExecuteSqlRaw("Update Timeslots set BookingId = {0} where Id = {1} AND RowVersion = {2}", entity.BookingId, entity.Id, entity.RowVersion);
+            if (result < 1)
+                throw new Exception("Concurrency exception");
         }
+
+
 
     }
 }

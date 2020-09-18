@@ -24,7 +24,7 @@ namespace Model.Tests
             var person = new Student();
             try
             {
-                person.AddBooking(new Booking { StartDateTime = DateTime.Now.AddDays(-5) });
+                person.AddBooking(new Booking { StartDateTime = DateTime.Now.AddSeconds(-5) });
                 person.AddBooking(new Booking { StartDateTime = DateTime.Now });
             }
             catch (Exception ex)

@@ -66,6 +66,11 @@ namespace VejledningsBooking
                     services.AddScoped(c.GetInterfaces().First(), c);
                     continue;
                 }
+                else if (c.Name == "CalenderDateManager")
+                {
+                    services.AddSingleton(c.GetInterfaces().First(), c);
+                        continue;
+                }
                 services.AddTransient(c.GetInterfaces().First(), c);
             }
         }

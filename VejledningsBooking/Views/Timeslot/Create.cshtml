@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div id="modal-ts-body" class="modal-body">
-                <form id="createBookingForm" class="form-group" action="Timeslot/Create" method="post">
+                <form id="createBookingForm" class="form-group" action="~/Timeslot/Create" method="post">
                     @Html.ValidationSummary()
                     @Html.AntiForgeryToken()
                     @Html.HiddenFor(x => x.Timeslot.CalendarId)

@@ -13,8 +13,8 @@ namespace Model.Tests
         public void SetDatesTest()
         {
             var slot = new Timeslot();
-            var date1 = new DateTime(2020, 09, 16, 23, 30, 00);
-            var date2 = date1.AddMinutes(30);
+            slot.StartDateTime = new DateTime(2020, 09, 18, 23, 30, 00);
+            slot.EndDateTime = slot.StartDateTime.AddMinutes(30);
             bool exceptionThrown = false;
             try
             {
@@ -27,5 +27,15 @@ namespace Model.Tests
             }
             Assert.IsFalse(exceptionThrown);
         }
+        [TestMethod]
+        public void SingleOoCollectionTest()
+        {
+            var start = new DateTime(2020, 09, 18, 15, 30, 00);
+            var slot = new Timeslot { CalendarId = 1, StartDateTime = start, EndDateTime = start.AddDays(2), TeacherId = 1 };
+            var slotList = slot.DetermineSingleOrCollectionTimeslots();
+
+            Assert.IsTrue(slotList.Count == 1);
+        }
+        
     }
 }
