@@ -1,28 +1,30 @@
-﻿using Infrastructure.Repository;
-using Infrastructure.Repository.Hold.Concretes;
-using System;
+﻿using DataAcces.Query.Hold;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.ApplicationLogic.Hold.Concretes
 {
     public class HoldCRUD : IHoldCRUD
     {
-        private readonly IHoldRepository holdRepository;
-        private readonly IHoldLinjeRepository holdLinjeRepository;
-        public HoldCRUD(IHoldRepository holdRepository, IHoldLinjeRepository holdLinjeRepository)
+        private readonly IHoldQuery holdQuery;
+        private readonly IHoldLinjeQuery holdLinjeQuery;
+
+        public HoldCRUD(IHoldQuery holdQuery, IHoldLinjeQuery holdLinjeQuery)
         {
-            this.holdRepository = holdRepository;
-            this.holdLinjeRepository = holdLinjeRepository;
+            this.holdQuery = holdQuery;
+            this.holdLinjeQuery = holdLinjeQuery;
         }
         public async Task<List<Model.Hold>> GetAllHold()
         {
-            return await holdRepository.GetAll(null);
+            return await holdQuery.GetAll();
+        }
+        public async Task<List<Model.Hold>> GetHoldWithoutSchema()
+        {
+           return await holdQuery.GetAllHoldWithoutSchema();
         }
         public async Task<List<Model.Hold>> GetAllHoldForPerson(Model.Person person)
         {
-            var linjeListe = await holdLinjeRepository.GetHoldLinjeListFromPerson(person);
+            var linjeListe = await holdLinjeQuery.GetHoldLinjeListFromPerson(person);
             var holdList = new List<Model.Hold>();
             foreach(var linje in linjeListe)
             {
@@ -32,7 +34,7 @@ namespace Infrastructure.ApplicationLogic.Hold.Concretes
         }
         public async Task<Model.Hold>GetHoldFromId(int id)
         {
-            return await holdRepository.GetHoldWithIncludes(id);
+            return await holdQuery.GetHoldWithIncludes(id);
         }
     }
 }

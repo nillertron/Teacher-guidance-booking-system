@@ -1,36 +1,39 @@
-﻿using Infrastructure.ApplicationLogic.Cookie.Concretes;
-using Infrastructure.Repository;
-using Infrastructure.Repository.Concretes;
+﻿using DataAcces.Command.Person;
+using DataAcces.Query.Person;
+using Infrastructure.ApplicationLogic.Cookie.Concretes;
 using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.ApplicationLogic.Person.Concretes
 {
     public class PersonState : IPersonState
     {
-        private bool IsLoggedIn = false;
-        private readonly IPersonRepository personRepository;
-        private Model.Person person;
+        private readonly IPersonCommand personCommand;
+        private readonly IPersonQuery personQuery;
+        private readonly ITeacherCommand teacherCommand;
+        private readonly ITeacherQuery teacherQuery;
+        private readonly IStudentCommand studentCommand;
+        private readonly IStudentQuery studentQuery;
         private readonly ICookieCRUD cookieCRUD;
-        private readonly ITeacherRepository teacherRepository;
-        private readonly IStudentRepository studentRepository;
+
+        private Model.Person person;
+
         private bool FirstRender = true;
-        string d = string.Empty;
-        public PersonState(IPersonRepository personRepository, ICookieCRUD cookieCrud, ITeacherRepository teacherRepo, IStudentRepository studenRepo)
+        public PersonState(ICookieCRUD cookieCrud, IPersonCommand personCommand, IPersonQuery personQuery, ITeacherQuery teacherQuery, ITeacherCommand teacherCommand, IStudentQuery studentQuery, IStudentCommand studentCommand)
         {
-            this.personRepository = personRepository;
             this.cookieCRUD = cookieCrud;
-            this.teacherRepository = teacherRepo;
-            this.studentRepository = studenRepo;
+            this.personQuery = personQuery;
+            this.personCommand = personCommand;
+            this.teacherCommand = teacherCommand;
+            this.teacherQuery = teacherQuery;
+            this.studentCommand = studentCommand;
+            this.studentQuery = studentQuery;
         }
         public async Task<Model.Person> GetPersonAsync()
         {
             if(person == null)
             {
-                await CheckForCookie();
+                await CheckForCookie(true);
                 if (person == null)
                     throw new Exception("Person not logged in");
 
@@ -38,20 +41,31 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
             return person;
 
         }
-        private async Task CheckForCookie()
+        public async Task<int> GetPersonIdAsync()
+        {
+            if(person == null)
+            {
+                await CheckForCookie(false);
+                if (person == null)
+                    throw new Exception("Person not logged in");
+            }
+            return person.Id;
+        }
+        private async Task CheckForCookie(bool getAttachedEntities)
         {
             var cookieValue = await cookieCRUD.GetCookieValue("login");
             if(cookieValue!=null)
             {
                 var cookie = await cookieCRUD.GetCookieFromValue(cookieValue);
                 person = cookie.Person;
+                if(getAttachedEntities)
                 await GetAttachedEntities();
                 FirstRender = false;
             }
         }
         public async Task AttemptLogin(string username, string password)
         {
-            this.person = await personRepository.GetUserFromNameAndPassword(username, password);
+            this.person = await personQuery.GetUserFromNameAndPassword(username, password);
             if (this.person == null)
                 throw new Exception("Credentials failed");
             else
@@ -65,18 +79,18 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
             var type = await GetUserType();
             if(type == PersonType.Student)
             {
-                    person = await studentRepository.GetStudentWithIncludes(person.Id);
+                    person = await studentQuery.GetStudentWithIncludes(person.Id);
 
 
             }
             else if(type == PersonType.Teacher)
             {
-                person = await teacherRepository.GetTeacherWithIncludes(person.Id);
+                person = await teacherQuery.GetTeacherWithIncludes(person.Id);
             }
         }
         public async Task<LoginState> GetLoginState()
         {
-            await CheckForCookie();
+            await CheckForCookie(true);
             if (person != null)
                 return LoginState.LoggedIn;
             else
@@ -87,7 +101,7 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
             if (FirstRender)
             {
                 FirstRender = false;
-                await CheckForCookie();
+                await CheckForCookie(true);
             }
             if (person != null)
             {
@@ -101,7 +115,7 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
         }
         public async Task LogOff()
         {
-            await CheckForCookie();
+            await CheckForCookie(false);
             if(person != null)
             {
                 await cookieCRUD.DeleteCookie("login");

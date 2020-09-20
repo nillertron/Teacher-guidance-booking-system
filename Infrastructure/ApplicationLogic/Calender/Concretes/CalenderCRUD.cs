@@ -1,7 +1,7 @@
-﻿using Infrastructure.ApplicationLogic.Hold.Concretes;
-using Infrastructure.Repository;
-using Infrastructure.Repository.Calender.Concretes;
-using Infrastructure.Repository.Hold.Concretes;
+﻿using DataAcces.Command.Calender;
+using DataAcces.Command.Hold;
+using DataAcces.Query.Calender;
+using Infrastructure.ApplicationLogic.Hold.Concretes;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -12,38 +12,39 @@ namespace Infrastructure.ApplicationLogic.Calender.Concretes
 {
     public class CalenderCRUD : ICalenderCRUD
     {
-        private readonly ICalenderRepository calenderRepository;
-        private readonly IHoldRepository holdRepository;
-        private readonly ITimeslotRepository timeslotRepository;
-        public CalenderCRUD(ICalenderRepository calenderRepository, IHoldRepository holdRepository, ITimeslotRepository timeslotRepository)
+        private readonly ICalenderCommand calenderCommand;
+        private readonly ICalenderQuery calenderQuery;
+        private readonly IHoldCommand holdCommand;
+
+        public CalenderCRUD(ICalenderCommand calenderCommand,ICalenderQuery calenderQuery, IHoldCommand holdCommand)
         {
-            this.calenderRepository = calenderRepository;
-            this.holdRepository = holdRepository;
-            this.timeslotRepository = timeslotRepository;
+            this.calenderQuery = calenderQuery;
+            this.calenderCommand = calenderCommand;
+            this.holdCommand = holdCommand;
         }
         public async Task Create(Model.Calender model)
         {
             var holdListe = model.Hold;
             model.Hold = null;
-            await calenderRepository.Create(model);
+            await calenderCommand.Create(model);
             foreach (var hold in holdListe)
             {
                 hold.CalenderId = model.Id;
-                await holdRepository.Update(hold);
+                await holdCommand.Update(hold);
             }
 
         }
         public async Task<List<Model.Calender>> GetAll()
         {
-            return await calenderRepository.GetAll((x => x.Hold), (z => z.Timeslots));
+            return await calenderQuery.GetAll((x => x.Hold), (z => z.Timeslots));
         }
         public async Task<Model.Calender> Get(Model.Hold hold)
         {
-            return await calenderRepository.GetCalenderWithIncludes(hold);
+            return await calenderQuery.GetCalenderWithIncludes(hold);
         }
         public async Task<Model.Calender> Get(int calenderId)
         {
-            return await calenderRepository.GetCalenderWithIncludes(calenderId);
+            return await calenderQuery.GetCalenderWithIncludes(calenderId);
         }
     }
 }

@@ -1,38 +1,42 @@
-﻿using Infrastructure.ApplicationLogic.Person.Concretes;
-using Infrastructure.Repository;
-using Infrastructure.Repository.Booking.Concretes;
-using Infrastructure.Repository.Concretes;
-using Model;
+﻿using DataAcces.Command.Booking;
+using DataAcces.Command.Timeslot;
+using DataAcces.Query.Person;
+using DataAcces.Query.Timeslot;
+using Infrastructure.ApplicationLogic.Person.Concretes;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.ApplicationLogic.Timeslot.Concretes
 {
     public class BookTimeslot : IBookTimeslot
     {
-        private readonly ITimeslotRepository timeslotRepository;
         private readonly IPersonState state;
-        private readonly IStudentRepository studentRepository;
-        private readonly IBookingRepository bookingRepository;
-        public BookTimeslot(ITimeslotRepository timeslotRepository, IPersonState state, IStudentRepository studentRepository, IBookingRepository bookingRepository)
+        private readonly IStudentQuery studentQuery;
+        private readonly IBookingCommand bookingCommand;
+        private readonly ITimeslotCommand timeslotCommand;
+        private readonly ITimeslotQuery timeslotQuery;
+        public BookTimeslot( IPersonState state, IStudentQuery studentQuery, IBookingCommand bookingCommand, ITimeslotQuery timeslotQuery, ITimeslotCommand timeslotCommand)
         {
-            this.timeslotRepository = timeslotRepository;
             this.state = state;
-            this.studentRepository = studentRepository;
-            this.bookingRepository = bookingRepository;
+            this.studentQuery = studentQuery;
+            this.bookingCommand = bookingCommand;
+            this.timeslotQuery = timeslotQuery;
+            this.timeslotCommand = timeslotCommand;
+
         }
         public async Task TryBookTimeslot(Model.Timeslot timeslot, Model.Booking booking)
         {
-            var student = (Student)await state.GetPersonAsync();
-            booking.StudentId = student.Id;
+            if (timeslot.StartDateTime < DateTime.Now)
+                throw new Exception("Cannot book old date");
+            var studentId = await state.GetPersonIdAsync();
+            booking.StudentId = studentId;
+            var student = await studentQuery.GetStudentWithFutureBookings(studentId);
             student.AddBooking(booking);
-            await bookingRepository.Create(booking);
-            var slot = await timeslotRepository.GetSingle(timeslot.Id);
+            await bookingCommand.Create(booking);
+            var slot = await timeslotQuery.GetSingle(timeslot.Id);
             slot.BookingId = booking.Id;
             slot.Booking = booking;
-            await timeslotRepository.UpdateWithConcurrencyCheck(slot);
+            await timeslotCommand.UpdateWithConcurrencyCheck(slot);
 
         }
     }

@@ -1,20 +1,24 @@
-﻿using Infrastructure.ApplicationLogic.Person.Concretes;
-using Infrastructure.Repository;
-using System;
+﻿using DataAcces.Command.Timeslot;
+using DataAcces.Query.Person;
+using DataAcces.Query.Timeslot;
+using Infrastructure.ApplicationLogic.Person.Concretes;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.ApplicationLogic.Timeslot.Concretes
 {
     public class TimeslotCrud : ITimeslotCrud
     {
-        private readonly ITimeslotRepository timeslotRepository;
         private readonly IPersonState personState;
-        public TimeslotCrud(ITimeslotRepository timeslotRepository, IPersonState personState)
+        private readonly ITimeslotQuery timeslotQuery;
+        private readonly ITimeslotCommand timeslotCommand;
+        private readonly ITeacherQuery teacherQuery;
+        public TimeslotCrud(IPersonState personState, ITimeslotCommand timeslotCommand, ITimeslotQuery timeslotQuery, ITeacherQuery teacherQuery)
         {
-            this.timeslotRepository = timeslotRepository;
             this.personState = personState;
+            this.timeslotQuery = timeslotQuery;
+            this.timeslotCommand = timeslotCommand;
+            this.teacherQuery = teacherQuery;
         }
         public async Task Create(Model.Timeslot slot)
         {
@@ -24,17 +28,18 @@ namespace Infrastructure.ApplicationLogic.Timeslot.Concretes
             slotList = await TryAddToTeacher(slotList);
             foreach(var s in slotList)
             {
-                await timeslotRepository.Create(s);
+                await timeslotCommand.Create(s);
 
             }
         }
         public async Task<Model.Timeslot> GetFromId(int id)
         {
-            return await timeslotRepository.GetWithIncludes(id);
+            return await timeslotQuery.GetWithIncludes(id);
         }
         private async Task<List<Model.Timeslot>> TryAddToTeacher(List<Model.Timeslot> slotList)
         {
-            var teacher = (Model.Teacher)await personState.GetPersonAsync();
+            var teacherId = await personState.GetPersonIdAsync();
+            var teacher = await teacherQuery.GetTeacherWithFutureTimeslots(teacherId);
             var succesfullyAddedToTeacherList = new List<Model.Timeslot>();
             foreach (var ts in slotList)
             {

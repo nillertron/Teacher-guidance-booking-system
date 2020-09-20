@@ -9,5 +9,6 @@ namespace Infrastructure.ApplicationLogic.Person.Concretes
         Task<PersonType> GetUserType();
         Task<Model.Person> GetPersonAsync();
         Task LogOff();
+        Task<int> GetPersonIdAsync();
     }
 }

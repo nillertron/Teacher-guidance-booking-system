@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DataAcces;
+using DataAcces.Command;
+using DataAcces.Query;
 using Infrastructure;
-using Infrastructure.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,13 +42,18 @@ namespace VejledningsBooking
         }
         private void ConfigureRepositories(IServiceCollection services)
         {
-            var collection = Assembly.Load(nameof(Infrastructure)).GetTypes().Where(x => x.FullName.Contains("Repository") && !x.Name.StartsWith("I") && !x.IsNested).ToList();
+            var collection = Assembly.Load(nameof(DataAcces)).GetTypes().Where(x => !x.FullName.Contains("Migrations") && !x.Name.Contains("Anonymous") && x.Name != nameof(VejledningsContext) &&  !x.Name.StartsWith("I") && !x.IsNested).ToList();
 
             foreach (var c in collection)
             {
-                if (c.Name.StartsWith("Repository"))
+                if (c.Name.Contains("QueryRepository"))
                 {
-                    services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+                    services.AddTransient(typeof(IQueryRepository<>), typeof(QueryRepository<>));
+                    continue;
+                }
+                else if (c.Name.Contains("CommandRepository"))
+                {
+                    services.AddTransient(typeof(ICommandRepository<>), typeof(CommandRepository<>));
                     continue;
                 }
                 else

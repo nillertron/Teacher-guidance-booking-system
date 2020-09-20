@@ -1,23 +1,25 @@
-﻿using Infrastructure.Repository;
+﻿using DataAcces.Command.Person;
+using DataAcces.Query.Person;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.ApplicationLogic.Person.Concretes
 {
     public class PersonCRUD : IPersonCRUD
     {
-        private readonly IPersonRepository repository;
-        public PersonCRUD(IPersonRepository repo)
+        private readonly IPersonCommand personCommand;
+        private readonly IPersonQuery personQuery;
+
+        public PersonCRUD(IPersonCommand personCommand, IPersonQuery personQuery)
         {
-            this.repository = repo;
+            this.personCommand = personCommand;
+            this.personQuery = personQuery;
         }
         public async Task CreatePerson(Model.Person person)
         {
-            if (await repository.UserNameExists(person.Username))
+            if (await personQuery.UserNameExists(person.Username))
                 throw new Exception("Username is taken");
-            await repository.Create(person);
+            await personCommand.Create(person);
         }
 
     }

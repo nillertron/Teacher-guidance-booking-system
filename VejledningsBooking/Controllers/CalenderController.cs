@@ -103,7 +103,7 @@ namespace VejledningsBooking.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            var model = new CreateCalenderViewModel { HoldList = await holdCRUD.GetAllHold() };
+            var model = new CreateCalenderViewModel { HoldList = await holdCRUD.GetHoldWithoutSchema() };
             return View(model);
         }
         [HttpPost]

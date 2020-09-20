@@ -7,7 +7,7 @@
 
         </div>
         <div class="float-right">
-                <a asp-action="NextWeek" asp-controller="Calender" asp-route-week="@Model.NextWeek" asp-route-holdid="@Model.SelectedHoldId" class="btn btn-primary">&gt;</a>
+            <a asp-action="NextWeek" asp-controller="Calender" asp-route-week="@Model.NextWeek" asp-route-holdid="@Model.SelectedHoldId" class="btn btn-primary">&gt;</a>
         </div>
     </div>
 </div>
@@ -25,29 +25,54 @@
     <tbody>
         @for (int j = 0; j < Model.Hours.Count; j++)
         {
-            <tr>
-                <td><h5 style="white-space:nowrap">@Model.Hours[j].ToString("HH:mm") - @Model.Hours[j].AddMinutes(30).ToString("HH:mm")</h5></td>
-                @for (int i = 0; i < 5; i++)
+        <tr>
+            <td><h5 style="white-space:nowrap">@Model.Hours[j].ToString("HH:mm") - @Model.Hours[j].AddMinutes(30).ToString("HH:mm")</h5></td>
+            @for (int i = 0; i < 5; i++)
+            {
+                var appointment = Model.SelectedCalender.Timeslots.Where(y => Model.SelectedCalender.Timeslots.Any(x => y.StartDateTime.TimeOfDay == Model.Hours[j].TimeOfDay && y.StartDateTime.Date == Model.Dates[i].Date)).ToList();
+                if (appointment.Count > 0)
                 {
-                    var appointment = Model.SelectedCalender.Timeslots.FirstOrDefault(y => Model.SelectedCalender.Timeslots.Any(x => y.StartDateTime.TimeOfDay == Model.Hours[j].TimeOfDay && y.StartDateTime.Date == Model.Dates[i].Date));
-                    @if (appointment != null)
+                    if (appointment.Count == 1)
                     {
-                        if (appointment.Booking == null)
+                        if (appointment[0].Booking == null)
                         {
-                            <td id="@appointment.Id" onclick="ToggleModal('CreateBookingModal'); retrieveId(this);" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer; color:white;" class="Available-Appointment text-center"><p>Teacher: @appointment.Teacher.FirstName</p></td>
-
+                            <td id="@appointment[0].Id" onclick="ToggleModal('CreateBookingModal'); retrieveId(this);" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer; color:white;" class="Available-Appointment text-center rounded"><p>Teacher: @appointment[0].Teacher.FirstName</p></td>
                         }
                         else
                         {
-                            <td class="Not-Available-Appointment text-center" style="color:white;">Reserved by @appointment.Booking.Student.FirstName</td>
+                            <td class="Not-Available-Appointment text-center rounded" style="color:white;">Reserved by @appointment[0].Booking.Student.FirstName</td>
                         }
+                        continue;
                     }
-                    else
+                    else if (appointment.Count > 1)
                     {
-                        <td></td>
+                        <td>
+                            <div class="row">
+                                @foreach (var ap in appointment)
+                                {
+                                    if (ap.Booking == null)
+                                    {
+                                        <div class="col-6 Available-Appointment text-center m-0 p-0 rounded" id="@ap.Id" onclick="ToggleModal('CreateBookingModal'); retrieveId(this);" data-toggle="modal" data-target="#CreateBookingModal" style="cursor:pointer; color:white; width:100%; height:auto"><p>Teacher: @ap.Teacher.FirstName</p></div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="col-6 Not-Available-Appointment text-center rounded" style="color:white;">Reserved by @ap.Booking.Student.FirstName</div>
+                                    }
+
+                                }
+                            </div>
+                        </td>
                     }
                 }
-            </tr>
+                else
+                {
+                    <td></td>
+                }
+
+            }
+        </tr>
+        
 
         }
     </tbody>

@@ -1,11 +1,8 @@
-﻿using Infrastructure.Repository;
-using Infrastructure.Repository.Cookie.Concretes;
+﻿using DataAcces.Command.Cookie;
+using DataAcces.Query.Cookie;
 using Microsoft.AspNetCore.Http;
 using Model;
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.ApplicationLogic.Cookie.Concretes
@@ -13,11 +10,13 @@ namespace Infrastructure.ApplicationLogic.Cookie.Concretes
     public class CookieCRUD : ICookieCRUD
     {
         private readonly IHttpContextAccessor httpContext;
-        private readonly ICookieRepository cookieRepo;
-        public CookieCRUD(IHttpContextAccessor httpContext, ICookieRepository cookieRepo)
+        private readonly ICookieCommand cookieCommand;
+        private readonly ICookieQuery cookieQuery;
+        public CookieCRUD(IHttpContextAccessor httpContext, ICookieQuery cookieQuery, ICookieCommand cookieCommand)
         {
             this.httpContext = httpContext;
-            this.cookieRepo = cookieRepo;
+            this.cookieCommand = cookieCommand;
+            this.cookieQuery = cookieQuery;
         }
         public async Task CreateCookie(string key, Model.Person person, int expiredays)
         {
@@ -25,7 +24,7 @@ namespace Infrastructure.ApplicationLogic.Cookie.Concretes
             options.Expires = DateTime.Now.AddDays(expiredays);
             var value = Guid.NewGuid().ToString();
             var dbCookie = new StoredCookie { Value = value, PersonId = person.Id};
-            await cookieRepo.Create(dbCookie);
+            await cookieCommand.Create(dbCookie);
             httpContext.HttpContext.Response.Cookies.Append(key, value, options);
         }
         public async Task<string> GetCookieValue(string key)
@@ -37,7 +36,7 @@ namespace Infrastructure.ApplicationLogic.Cookie.Concretes
         }
         public async Task<Model.StoredCookie> GetCookieFromValue(string value)
         {
-            return await cookieRepo.GetCookieEntityWithUser(value);
+            return await cookieQuery.GetCookieEntityWithUser(value);
         }
         public async Task DeleteCookie(string key)
         {

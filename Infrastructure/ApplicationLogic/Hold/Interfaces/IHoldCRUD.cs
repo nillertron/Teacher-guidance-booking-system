@@ -8,5 +8,8 @@ namespace Infrastructure.ApplicationLogic.Hold.Concretes
         Task<List<Model.Hold>> GetAllHold();
         Task<List<Model.Hold>> GetAllHoldForPerson(Model.Person person);
         Task<Model.Hold> GetHoldFromId(int id);
+        Task<List<Model.Hold>> GetHoldWithoutSchema();
+
+
     }
 }
